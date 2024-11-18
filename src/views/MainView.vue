@@ -4,7 +4,11 @@
     :type="alertType"
     @clear-msg="alertMessage = ''"
   />
-  <main-nav :resources="resources" @open-menu="openMenu($event)" />
+  <main-nav
+    :built-structures="builtStructures"
+    :resources="resources"
+    @open-menu="openMenu($event)"
+  />
   <game-window
     :built-structures="builtStructures"
     @add-resource="addResource($event)"
@@ -43,8 +47,9 @@ export default defineComponent({
       structures: [] as StructureObject[],
       builtStructures: [] as Array<string>,
       resources: {
-        wood: 2000,
-        stone: 1000,
+        wood: 0,
+        stone: 0,
+        clay: 0,
       } as { [key: string]: number },
       alertMessage: "",
       alertType: "",

@@ -1,12 +1,17 @@
 <template>
   <nav class="main-nav">
     <ul id="resources">
-      <li v-html="`${getIcon('wood')} ${resourcesObject.wood}`"></li>
-      <li v-html="`${getIcon('stone')} ${resourcesObject.stone}`"></li>
+      <template v-for="(n, key) in resourcesObject" :key="key">
+        <li
+          v-if="showResource(String(key))"
+          v-html="`${getIcon(String(key))} ${n}`"
+        ></li>
+      </template>
     </ul>
     <ul id="actions">
       <li>
         <button @click="openMenu('build')">BUILD</button>
+        <!-- achievements -->
       </li>
     </ul>
   </nav>
@@ -14,16 +19,21 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { getIcon } from "@/helpers/globalMethods";
+import {
+  getBuiltStructureFromResource,
+  getIcon,
+} from "@/helpers/globalMethods";
 
 export default defineComponent({
   name: "MainNavComponent",
   props: {
+    builtStructures: Array,
     resources: Object,
   },
   data() {
     return {
       resourcesObject: {} as { [key: string]: number },
+      builtStructuresList: [] as string[],
     };
   },
   watch: {
@@ -33,6 +43,12 @@ export default defineComponent({
         this.resourcesObject = v;
       },
     },
+    builtStructures: {
+      immediate: true,
+      handler(v) {
+        this.builtStructuresList = v;
+      },
+    },
   },
   methods: {
     getIcon(icon: string) {
@@ -40,6 +56,12 @@ export default defineComponent({
     },
     openMenu(menu: string) {
       this.$emit("open-menu", menu);
+    },
+    showResource(key: string) {
+      if (!this.builtStructuresList) return false;
+      return (
+        getBuiltStructureFromResource(this.builtStructuresList, key) != null
+      );
     },
   },
 });

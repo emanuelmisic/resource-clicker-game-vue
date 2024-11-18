@@ -20,12 +20,28 @@ export const STRUCTURES: StructureObject[] = [
     },
     upgrade_costs: [{ wood: 200 }, { wood: 350, stone: 90 }],
   },
+  {
+    id: "clay_pit",
+    resource_name: "clay",
+    structure_name: "Clay Pit",
+    icon: "clay",
+    resource_add_amounts: [1, 2, 3],
+    build_cost: {
+      wood: 150,
+      stone: 50,
+    },
+    upgrade_costs: [
+      { wood: 350, stone: 150 },
+      { wood: 800, stone: 450, clay: 100 },
+    ],
+  },
 ];
 
 export const ICONS: { [key: string]: string } = {
   // resources
   wood: "&#129717;",
   stone: "&#129704;",
+  clay: "&#127994;",
   // buildings
   tree: "&#127795;",
   saw: "",
