@@ -7,7 +7,12 @@
     <span class="structure__name--menu">{{
       getStructure?.structure_name
     }}</span>
-    <div v-html="costDisplay" class="structure__cost--menu"></div>
+    <div
+      v-if="costDisplay !== ''"
+      v-html="costDisplay"
+      class="structure__cost--menu"
+    />
+    <div v-else v-html="'<p>&#10003;</p>'" class="structure__cost--menu" />
     <button
       class="structure__action-btn--menu"
       :disabled="costDisplay === ''"
@@ -185,6 +190,7 @@ export default defineComponent({
 
 .structure--menu .structure__cost--menu p {
   font-size: 1.2rem;
+  font-weight: bold;
 }
 
 .structure--menu .structure__action-btn--menu {
