@@ -46,15 +46,50 @@ export default defineComponent({
 </script>
 
 <style>
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Funnel+Display:wght@300..800&family=Hanalei+Fill&family=Itim&family=Slackey&display=swap");
+
 .main-nav {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  align-content: center;
   height: 60px;
-  background-color: beige;
+  background: #fffec4;
+  background: -moz-linear-gradient(top, #fffec4 0%, #ffdb59 70%, #d2921a 100%);
+  background: -webkit-linear-gradient(
+    top,
+    #fffec4 0%,
+    #ffdb59 70%,
+    #d2921a 100%
+  );
+  background: linear-gradient(to bottom, #fffec4 0%, #ffdb59 70%, #d2921a 100%);
+}
+
+.main-nav ul {
+  display: flex;
 }
 
 .main-nav ul li {
+  margin-right: 10px;
   list-style-type: none;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
+}
+
+.main-nav #actions button {
+  font-family: "Itim", "cursive";
+  padding: 5px;
+  background: #ffee73;
+  background: -moz-linear-gradient(top, #ffee73 0%, #ffc25e 50%, #b06a30 100%);
+  background: -webkit-linear-gradient(
+    top,
+    #ffee73 0%,
+    #ffc25e 50%,
+    #b06a30 100%
+  );
+  background: linear-gradient(to bottom, #ffee73 0%, #ffc25e 50%, #b06a30 100%);
+}
+
+.main-nav #actions button:hover {
+  color: #754f03;
 }
 </style>
