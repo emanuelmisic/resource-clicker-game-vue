@@ -23,8 +23,4 @@ export default {
 button {
   cursor: pointer;
 }
-
-.hidden {
-  visibility: hidden;
-}
 </style>

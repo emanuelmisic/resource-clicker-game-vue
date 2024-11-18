@@ -1,35 +1,39 @@
 <template>
   <section class="game-window">
     <structure
-      v-for="s in structures"
-      :key="s.id"
-      :btn-text="`Add ${s.resourceName}`"
-      :icon="s.icon"
-      :name="s.structureName"
-      @add="$emit('add-resource', { res: s.resourceName, amount: 1 })"
+      v-for="id in buildings"
+      :key="id"
+      :structure-id="id"
+      @add="$emit('add-resource', $event)"
     />
   </section>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { STRUCTURES } from "@/helpers/constants";
 import Structure from "@/components/Structure.vue";
-
-type StructuresType = typeof STRUCTURES;
 
 export default defineComponent({
   name: "GameWindowComponent",
   components: {
     Structure,
   },
+  props: {
+    structures: Array,
+    builtStructures: Array,
+  },
   data() {
     return {
-      structures: [] as StructuresType,
+      buildings: [] as Array<string>,
     };
   },
-  mounted() {
-    this.structures = STRUCTURES as StructuresType;
+  watch: {
+    builtStructures: {
+      immediate: true,
+      handler(v) {
+        this.buildings = v;
+      },
+    },
   },
 });
 </script>

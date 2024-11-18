@@ -1,8 +1,8 @@
 <template>
   <nav class="main-nav">
     <ul id="resources">
-      <li v-html="`${$getIcon('wood')} ${resources.wood}`"></li>
-      <li v-html="`${$getIcon('stone')} ${resources.stone}`"></li>
+      <li v-html="`${getIcon('wood')} ${resourcesObject.wood}`"></li>
+      <li v-html="`${getIcon('stone')} ${resourcesObject.stone}`"></li>
     </ul>
     <ul id="actions">
       <li>
@@ -14,11 +14,30 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { getIcon } from "@/helpers/globalMethods";
 
 export default defineComponent({
   name: "MainNavComponent",
   props: {
     resources: Object,
+  },
+  data() {
+    return {
+      resourcesObject: {} as { [key: string]: number },
+    };
+  },
+  watch: {
+    resources: {
+      immediate: true,
+      handler(v) {
+        this.resourcesObject = v;
+      },
+    },
+  },
+  methods: {
+    getIcon(icon: string) {
+      return getIcon(icon);
+    },
   },
 });
 </script>

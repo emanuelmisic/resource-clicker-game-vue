@@ -5,8 +5,4 @@ function getIcon(key: string): string | null {
   return null;
 }
 
-export default {
-  install(app: any) {
-    app.config.globalProperties.$getIcon = getIcon;
-  },
-};
+export { getIcon };

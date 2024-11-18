@@ -1,31 +1,68 @@
 <template>
   <div v-if="type === 'menu'" class="structure--menu">
-    <span class="structure__icon--menu">&#129704;</span>
-    <span class="structure__name--menu">Stone Quarry</span>
-    <div class="structure__cost--menu">&#129717; 50</div>
-    <button class="structure__action-btn--menu" @click="$emit('buy')">
+    <span
+      v-html="getIcon(getStructure.icon)"
+      class="structure__icon--menu"
+    ></span>
+    <span class="structure__name--menu">{{
+      getStructure?.structure_name
+    }}</span>
+    <div v-html="displayCost" class="structure__cost--menu"></div>
+    <button
+      class="structure__action-btn--menu"
+      @click="$emit('buy', getStructure)"
+    >
       BUY
     </button>
   </div>
   <div v-else class="structure">
-    <span v-html="$getIcon('tree')" class="structure__icon"></span>
-    <span class="structure__name">{{ name }}</span>
-    <button class="structure__action-btn" @click="$emit('add')">
-      {{ btnText }}
+    <span v-html="getIcon(getStructure.icon)" class="structure__icon"></span>
+    <span class="structure__name">{{ getStructure?.structure_name }}</span>
+    <button
+      class="structure__action-btn"
+      @click="$emit('add', { res: getStructure?.resource_name, amount: 1 })"
+    >
+      Generate {{ getStructure?.resource_name }}
     </button>
   </div>
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from "vue";
+import { StructureObject } from "@/helpers/types";
+import { getIcon } from "@/helpers/globalMethods";
+import { STRUCTURES } from "@/helpers/constants";
+
+export default defineComponent({
   name: "StructureComponent",
   props: {
     type: { type: String, default: null },
-    name: { type: String, default: null },
-    icon: { type: String, default: null },
-    btnText: { type: String, default: null },
+    structureId: String,
   },
-};
+  computed: {
+    getStructure(): StructureObject {
+      const structureList = STRUCTURES;
+      for (const i in structureList) {
+        if (structureList[i].id === this.structureId) return structureList[i];
+      }
+      return structureList[0];
+    },
+    displayCost(): string {
+      const cost = this.getStructure?.build_cost;
+      if (!cost) return "";
+      let result = "";
+      for (const k in cost) {
+        result += `<p>${getIcon(k)} ${cost[k]}</p>`;
+      }
+      return result;
+    },
+  },
+  methods: {
+    getIcon(icon: string) {
+      return getIcon(icon);
+    },
+  },
+});
 </script>
 
 <style>
@@ -74,7 +111,10 @@ export default {
 }
 
 .structure--menu .structure__cost--menu {
-  margin-top: auto;
+  margin-top: 10px;
+}
+
+.structure--menu .structure__cost--menu p {
   font-size: 1.2rem;
 }
 
