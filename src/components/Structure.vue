@@ -21,6 +21,7 @@
     <span class="structure__name">{{ getStructure?.structure_name }}</span>
     <span class="structure__level"> {{ structureLevelDisplay }} </span>
     <button
+      v-html="addBtnActionHtml"
       class="structure__action-btn"
       @click="
         $emit('add', {
@@ -28,9 +29,7 @@
           amount: calculatedAddAmount,
         })
       "
-    >
-      Generate {{ getStructure?.resource_name }}
-    </button>
+    />
   </div>
 </template>
 
@@ -72,8 +71,13 @@ export default defineComponent({
       return result;
     },
     btnActionDisplay(): string {
-      if (this.costDisplay === "") return "MAX LEVEL REACHED";
+      if (this.costDisplay === "") return "MAX";
       return this.level ? "UPGRADE" : "BUILD";
+    },
+    addBtnActionHtml(): string {
+      return `+${
+        this.getStructure.resource_add_amounts[this.level - 1]
+      }${getIcon(this.getStructure.resource_name)}`;
     },
     structureLevelDisplay(): string {
       return `(level ${this.level})`;
@@ -111,7 +115,17 @@ export default defineComponent({
   width: 150px;
   height: 150px;
 
-  border: 1px solid black;
+  background-color: #ffe4c1;
+
+  border: 1px solid #ffb700;
+  border-radius: 10%;
+
+  -webkit-box-shadow: 5px 5px 0px 0px #e2a200, 10px 10px 0px 0px #c88f00,
+    15px 15px 0px 0px #a27400, 20px 20px 0px 0px #715100,
+    25px 25px 0px 0px #4a3500;
+  box-shadow: 5px 5px 0px 0px #e2a200, 10px 10px 0px 0px #c88f00,
+    15px 15px 0px 0px #a27400, 20px 20px 0px 0px #715100,
+    25px 25px 0px 0px #4a3500;
 }
 
 .structure .structure__icon {
@@ -125,6 +139,23 @@ export default defineComponent({
 
 .structure__action-btn {
   margin-top: auto;
+  margin-bottom: 2px;
+  padding: 0 4px 0 4px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #4a3500;
+
+  border-radius: 6px;
+
+  background: #fffec4;
+  background: -moz-linear-gradient(top, #fffec4 0%, #ffdb59 70%, #d2921a 100%);
+  background: -webkit-linear-gradient(
+    top,
+    #fffec4 0%,
+    #ffdb59 70%,
+    #d2921a 100%
+  );
+  background: linear-gradient(to bottom, #fffec4 0%, #ffdb59 70%, #d2921a 100%);
 }
 
 .structure--menu {
@@ -135,7 +166,8 @@ export default defineComponent({
   width: 180px;
   height: 180px;
 
-  border: 1px solid black;
+  border: 4px solid #4a3500;
+  border-radius: 20%;
 }
 
 .structure--menu .structure__icon--menu {
@@ -157,5 +189,6 @@ export default defineComponent({
 
 .structure--menu .structure__action-btn--menu {
   margin-top: auto;
+  margin-bottom: 2px;
 }
 </style>

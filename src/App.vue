@@ -25,5 +25,28 @@ export default {
 
 button {
   cursor: pointer;
+  font-family: "Itim", "cursive";
+  padding: 5px;
+  background: #ffee73;
+  background: -moz-linear-gradient(top, #ffee73 0%, #ffc25e 50%, #b06a30 100%);
+  background: -webkit-linear-gradient(
+    top,
+    #ffee73 0%,
+    #ffc25e 50%,
+    #b06a30 100%
+  );
+  background: linear-gradient(to bottom, #ffee73 0%, #ffc25e 50%, #b06a30 100%);
+}
+
+button:hover {
+  transform: scale(1.1);
+}
+
+button:disabled {
+  transform: scale(1);
+}
+
+button:active {
+  transform: scale(1);
 }
 </style>

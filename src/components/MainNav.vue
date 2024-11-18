@@ -74,22 +74,4 @@ export default defineComponent({
   list-style-type: none;
   font-size: 1.3rem;
 }
-
-.main-nav #actions button {
-  font-family: "Itim", "cursive";
-  padding: 5px;
-  background: #ffee73;
-  background: -moz-linear-gradient(top, #ffee73 0%, #ffc25e 50%, #b06a30 100%);
-  background: -webkit-linear-gradient(
-    top,
-    #ffee73 0%,
-    #ffc25e 50%,
-    #b06a30 100%
-  );
-  background: linear-gradient(to bottom, #ffee73 0%, #ffc25e 50%, #b06a30 100%);
-}
-
-.main-nav #actions button:hover {
-  color: #754f03;
-}
 </style>

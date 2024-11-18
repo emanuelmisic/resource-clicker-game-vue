@@ -72,9 +72,11 @@ export default defineComponent({
   transform: translate(-50%, -50%);
 
   display: flex;
-  gap: 5px;
+  gap: 20px;
 
-  border: 2px solid green;
+  border: 4px solid #a27400;
+  border-radius: 10px;
+  background-color: #ffe4c1;
 }
 
 .dialog .close-btn {

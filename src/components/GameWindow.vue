@@ -50,10 +50,12 @@ export default defineComponent({
 
 <style>
 .game-window {
+  padding: 1rem;
   display: flex;
-  gap: 5px;
-  height: 100%;
+  gap: 1rem;
   width: 100%;
-  border: 1px solid blue;
+  height: calc(100vh - 60px);
+
+  background-color: #74b06b;
 }
 </style>
