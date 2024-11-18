@@ -1,7 +1,11 @@
+type StructureCostType = { [key: string]: number };
+
 export type StructureObject = {
   id: string;
   resource_name: string;
   structure_name: string;
   icon: string;
-  build_cost?: { [key: string]: number };
+  resource_add_amounts: number[];
+  upgrade_costs: StructureCostType[];
+  build_cost?: StructureCostType;
 };

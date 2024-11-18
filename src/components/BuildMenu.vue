@@ -1,12 +1,14 @@
 <template>
-  <div class="dialog">
-    <button class="close-btn" @click="close()">&#10060;</button>
+  <div v-if="isOpen" class="dialog">
+    <button class="close-btn" @click="$emit('close')">&#10060;</button>
     <structure
       v-for="s in structuresList"
       :key="s.id"
       :structure-id="s.id"
+      :structure-level="getBuiltStructureLevel(s.id)"
       type="menu"
-      @buy="$emit('buy-structure', $event)"
+      @build="$emit('build-structure', $event)"
+      @upgrade="$emit('upgrade-structure', $event)"
     />
   </div>
 </template>
@@ -15,6 +17,7 @@
 import { defineComponent } from "vue";
 import Structure from "@/components/Structure.vue";
 import { StructureObject } from "@/helpers/types";
+import { getLevel } from "@/helpers/globalMethods";
 
 export default defineComponent({
   name: "BuildMenuDialog",
@@ -22,11 +25,15 @@ export default defineComponent({
     Structure,
   },
   props: {
+    builtStructures: Array,
+    isOpen: Boolean,
     structures: Array,
   },
   data() {
     return {
+      open: false,
       structuresList: [] as StructureObject[],
+      builtStructuresList: [] as string[],
     };
   },
   watch: {
@@ -36,10 +43,21 @@ export default defineComponent({
         this.structuresList = v ?? [];
       },
     },
+    builtStructures: {
+      immediate: true,
+      handler(v) {
+        this.builtStructuresList = v ?? [];
+      },
+    },
   },
   methods: {
-    close() {
-      console.log("Close the menu");
+    getBuiltStructureLevel(id: string): number {
+      for (const k in this.builtStructuresList) {
+        if (this.builtStructuresList[k].includes(id)) {
+          return getLevel(this.builtStructuresList[k]);
+        }
+      }
+      return 0;
     },
   },
 });

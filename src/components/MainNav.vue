@@ -6,7 +6,7 @@
     </ul>
     <ul id="actions">
       <li>
-        <button>BUILD</button>
+        <button @click="openMenu('build')">BUILD</button>
       </li>
     </ul>
   </nav>
@@ -37,6 +37,9 @@ export default defineComponent({
   methods: {
     getIcon(icon: string) {
       return getIcon(icon);
+    },
+    openMenu(menu: string) {
+      this.$emit("open-menu", menu);
     },
   },
 });

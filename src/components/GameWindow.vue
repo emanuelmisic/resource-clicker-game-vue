@@ -1,9 +1,10 @@
 <template>
   <section class="game-window">
     <structure
-      v-for="id in buildings"
-      :key="id"
-      :structure-id="id"
+      v-for="item in buildings"
+      :key="getId(item)"
+      :structure-id="getId(item)"
+      :structure-level="getLevel(item)"
       @add="$emit('add-resource', $event)"
     />
   </section>
@@ -12,6 +13,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import Structure from "@/components/Structure.vue";
+import { getLevel } from "@/helpers/globalMethods";
 
 export default defineComponent({
   name: "GameWindowComponent",
@@ -33,6 +35,14 @@ export default defineComponent({
       handler(v) {
         this.buildings = v;
       },
+    },
+  },
+  methods: {
+    getId(item: string): string {
+      return item.split(":")[0];
+    },
+    getLevel(item: string): number {
+      return getLevel(item);
     },
   },
 });

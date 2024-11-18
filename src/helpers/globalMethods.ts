@@ -5,4 +5,9 @@ function getIcon(key: string): string | null {
   return null;
 }
 
-export { getIcon };
+function getLevel(item: string): number {
+  const arr = item.split(":");
+  return parseInt(arr[arr.length - 1]);
+}
+
+export { getIcon, getLevel };

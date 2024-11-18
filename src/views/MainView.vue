@@ -4,12 +4,19 @@
     :type="alertType"
     @clear-msg="alertMessage = ''"
   />
-  <main-nav :resources="resources" />
+  <main-nav :resources="resources" @open-menu="openMenu($event)" />
   <game-window
     :built-structures="builtStructures"
     @add-resource="addResource($event)"
   />
-  <build-menu :structures="structures" @buy-structure="buyStructure($event)" />
+  <build-menu
+    :built-structures="builtStructures"
+    :is-open="isBuildMenuOpen"
+    :structures="structures"
+    @build-structure="buyStructure('build', $event)"
+    @close="isBuildMenuOpen = false"
+    @upgrade-structure="buyStructure('upgrade', $event)"
+  />
 </template>
 
 <script lang="ts">
@@ -21,6 +28,7 @@ import AlertWindow from "@/components/AlertWindow.vue";
 import MainNav from "@/components/MainNav.vue";
 import GameWindow from "@/components/GameWindow.vue";
 import BuildMenu from "@/components/BuildMenu.vue";
+import { getLevel } from "@/helpers/globalMethods";
 
 export default defineComponent({
   name: "MainView",
@@ -35,37 +43,68 @@ export default defineComponent({
       structures: [] as StructureObject[],
       builtStructures: [] as Array<string>,
       resources: {
-        wood: 45,
+        wood: 200,
         stone: 0,
       } as { [key: string]: number },
       alertMessage: "",
       alertType: "",
+      isBuildMenuOpen: false,
     };
   },
   mounted() {
     this.structures = STRUCTURES as StructureObject[];
-    this.builtStructures = ["wood_cutter"];
+    this.builtStructures = ["wood_cutter:1"];
   },
   methods: {
     addResource(e: { res: string; amount: number }) {
       this.resources[e.res] += e.amount;
     },
-    buyStructure(s: StructureObject) {
-      if (!s) return;
+    openMenu(menu: string) {
+      if (menu === "build") this.isBuildMenuOpen = true;
+    },
+    getBuiltStructureLevel(id: string) {
+      let result = 0;
+      for (const k in this.builtStructures) {
+        if (this.builtStructures[k].includes(id)) {
+          result = getLevel(this.builtStructures[k]);
+          break;
+        }
+      }
+      return result;
+    },
+    buyStructure(action: string, s: StructureObject) {
+      if (!s || !action) return;
+      const cost =
+        action === "build"
+          ? s.build_cost
+          : s.upgrade_costs[this.getBuiltStructureLevel(s.id) - 1];
+
       for (const k in this.resources) {
-        if (s.build_cost && s.build_cost[k] > this.resources[k]) {
+        if (cost && cost[k] > this.resources[k]) {
           this.alertType = "error";
           this.alertMessage = "Not enough materials!";
           return;
         }
       }
+
       // buy the structure
-      for (const k in s.build_cost) {
-        this.resources[k] -= s.build_cost[k];
+      for (const k in cost) {
+        this.resources[k] -= cost[k];
       }
-      this.builtStructures.push(s.id as string);
-      this.alertType = "success";
-      this.alertMessage = `Bought ${s.structure_name}!`;
+      if (action === "build") {
+        this.builtStructures.push(`${s.id}:1`);
+        this.alertType = "success";
+        this.alertMessage = `Bought ${s.structure_name}!`;
+      } else {
+        for (const k in this.builtStructures) {
+          if (this.builtStructures[k].includes(s.id)) {
+            const level = getLevel(this.builtStructures[k]);
+            this.builtStructures[k] = `${s.id}:${level + 1}`;
+            this.alertType = "success";
+            this.alertMessage = `Upgraded ${s.structure_name}!`;
+          }
+        }
+      }
     },
   },
 });
