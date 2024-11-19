@@ -36,13 +36,3 @@ export const STRUCTURES: StructureObject[] = [
     ],
   },
 ];
-
-export const ICONS: { [key: string]: string } = {
-  // resources
-  wood: "&#129717;",
-  stone: "&#129704;",
-  clay: "&#127994;",
-  // buildings
-  tree: "&#127795;",
-  saw: "",
-};

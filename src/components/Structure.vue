@@ -1,32 +1,29 @@
 <template>
   <div v-if="type === 'menu'" class="structure--menu">
-    <span
-      v-html="getIcon(getStructure.icon)"
-      class="structure__icon--menu"
-    ></span>
+    <icon :icon-name="getStructure.icon" class="structure__icon--menu" />
     <span class="structure__name--menu">{{
       getStructure?.structure_name
     }}</span>
-    <div
-      v-if="costDisplay !== ''"
-      v-html="costDisplay"
-      class="structure__cost--menu"
-    />
+    <div v-if="cost" class="structure__cost--menu">
+      <span v-for="(n, key) in cost" :key="key">
+        <icon :icon-name="`${key as string}`" icon-size="tiny" />
+        {{ n }}
+      </span>
+    </div>
     <div v-else v-html="'<p>&#10003;</p>'" class="structure__cost--menu" />
     <button
       class="structure__action-btn--menu"
-      :disabled="costDisplay === ''"
+      :disabled="!cost"
       @click="handleClick()"
     >
       {{ btnActionDisplay }}
     </button>
   </div>
   <div v-else class="structure">
-    <span v-html="getIcon(getStructure.icon)" class="structure__icon"></span>
+    <icon :icon-name="getStructure.icon" class="structure__icon" />
     <span class="structure__name">{{ getStructure?.structure_name }}</span>
     <span class="structure__level"> {{ structureLevelDisplay }} </span>
     <button
-      v-html="addBtnActionHtml"
       class="structure__action-btn"
       @click="
         $emit('add', {
@@ -34,18 +31,25 @@
           amount: calculatedAddAmount,
         })
       "
-    />
+    >
+      +{{ resourceAddAmount }}
+      <icon :icon-name="getStructure.resource_name" icon-size="small" />
+    </button>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { StructureObject } from "@/helpers/types";
-import { getIcon } from "@/helpers/globalMethods";
+import { StructureCostType, StructureObject } from "@/helpers/types";
 import { STRUCTURES } from "@/helpers/constants";
+
+import Icon from "@/components/Icon.vue";
 
 export default defineComponent({
   name: "StructureComponent",
+  components: {
+    Icon,
+  },
   props: {
     type: { type: String, default: null },
     structureId: String,
@@ -64,25 +68,18 @@ export default defineComponent({
       }
       return structureList[0];
     },
-    costDisplay(): string {
-      let result = "";
+    cost(): StructureCostType | undefined {
       const cost = this.level
         ? this.getStructure.upgrade_costs[this.level - 1]
         : this.getStructure?.build_cost;
-      if (!cost) return result;
-      for (const k in cost) {
-        result += `<p>${getIcon(k)} ${cost[k]}</p>`;
-      }
-      return result;
+      return cost;
     },
     btnActionDisplay(): string {
-      if (this.costDisplay === "") return "MAX";
+      if (!this.cost) return "MAX";
       return this.level ? "UPGRADE" : "BUILD";
     },
-    addBtnActionHtml(): string {
-      return `+${
-        this.getStructure.resource_add_amounts[this.level - 1]
-      }${getIcon(this.getStructure.resource_name)}`;
+    resourceAddAmount(): number {
+      return this.getStructure.resource_add_amounts[this.level - 1];
     },
     structureLevelDisplay(): string {
       return `(level ${this.level})`;
@@ -100,9 +97,6 @@ export default defineComponent({
     },
   },
   methods: {
-    getIcon(icon: string) {
-      return getIcon(icon);
-    },
     handleClick() {
       if (this.level) this.$emit("upgrade", this.getStructure);
       else this.$emit("build", this.getStructure);
@@ -143,6 +137,8 @@ export default defineComponent({
 }
 
 .structure__action-btn {
+  display: flex;
+  align-items: center;
   margin-top: auto;
   margin-bottom: 2px;
   padding: 0 4px 0 4px;
@@ -185,10 +181,13 @@ export default defineComponent({
 }
 
 .structure--menu .structure__cost--menu {
+  display: flex;
+  flex-direction: column;
   margin-top: 10px;
 }
 
-.structure--menu .structure__cost--menu p {
+.structure--menu .structure__cost--menu span {
+  display: flex;
   font-size: 1.2rem;
   font-weight: bold;
 }

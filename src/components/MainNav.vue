@@ -2,10 +2,10 @@
   <nav class="main-nav">
     <ul id="resources">
       <template v-for="(n, key) in resourcesObject" :key="key">
-        <li
-          v-if="showResource(String(key))"
-          v-html="`${getIcon(String(key))} ${n}`"
-        ></li>
+        <li v-if="showResource(key as string)">
+          <icon :icon-name="`${key as string}`" icon-size="small" />
+          {{ n }}
+        </li>
       </template>
     </ul>
     <ul id="actions">
@@ -19,13 +19,15 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import {
-  getBuiltStructureFromResource,
-  getIcon,
-} from "@/helpers/globalMethods";
+import { getBuiltStructureFromResource } from "@/helpers/globalMethods";
+
+import Icon from "@/components/Icon.vue";
 
 export default defineComponent({
   name: "MainNavComponent",
+  components: {
+    Icon,
+  },
   props: {
     builtStructures: Array,
     resources: Object,
@@ -51,9 +53,6 @@ export default defineComponent({
     },
   },
   methods: {
-    getIcon(icon: string) {
-      return getIcon(icon);
-    },
     openMenu(menu: string) {
       this.$emit("open-menu", menu);
     },
@@ -92,6 +91,7 @@ export default defineComponent({
 }
 
 .main-nav ul li {
+  display: flex;
   margin-right: 10px;
   list-style-type: none;
   font-size: 1.3rem;

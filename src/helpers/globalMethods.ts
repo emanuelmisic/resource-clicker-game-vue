@@ -1,9 +1,4 @@
-import { ICONS, STRUCTURES } from "./constants";
-
-function getIcon(key: string): string | null {
-  if (key in ICONS) return ICONS[key];
-  return null;
-}
+import { STRUCTURES } from "./constants";
 
 function getLevel(item: string): number {
   const arr = item.split(":");
@@ -26,4 +21,4 @@ function getBuiltStructureFromResource(
   return null;
 }
 
-export { getIcon, getLevel, getBuiltStructureFromResource };
+export { getLevel, getBuiltStructureFromResource };

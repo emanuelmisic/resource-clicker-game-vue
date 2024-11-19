@@ -1,4 +1,4 @@
-type StructureCostType = { [key: string]: number };
+export type StructureCostType = { [key: string]: number };
 
 export type StructureObject = {
   id: string;
