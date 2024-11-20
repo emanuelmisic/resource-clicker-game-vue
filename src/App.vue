@@ -49,4 +49,8 @@ button:disabled {
 button:active {
   transform: scale(1);
 }
+
+.alert {
+  font-family: "Itim", "cursive";
+}
 </style>

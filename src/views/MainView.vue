@@ -47,7 +47,7 @@ export default defineComponent({
       structures: [] as StructureObject[],
       builtStructures: [] as Array<string>,
       resources: {
-        wood: 0,
+        wood: 500,
         stone: 0,
         clay: 0,
       } as { [key: string]: number },
@@ -106,7 +106,7 @@ export default defineComponent({
             const level = getLevel(this.builtStructures[k]);
             this.builtStructures[k] = `${s.id}:${level + 1}`;
             this.alertType = "success";
-            this.alertMessage = `Upgraded ${s.structure_name}!`;
+            this.alertMessage = `Successfully upgraded ${s.structure_name}!`;
           }
         }
       }
