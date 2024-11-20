@@ -10,7 +10,7 @@
         {{ n }}
       </span>
     </div>
-    <div v-else v-html="'<p>&#10003;</p>'" class="structure__cost--menu" />
+    <icon v-else icon-name="star" />
     <button
       class="structure__action-btn--menu"
       :disabled="!cost"

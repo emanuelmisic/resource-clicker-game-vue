@@ -25,25 +25,36 @@ export default defineComponent({
       switch (this.iconName) {
         // resources
         case "wood":
-          return new URL("@/assets/icons/wood/icons8-wood.png", import.meta.url)
-            .href;
+          return new URL(
+            "@/assets/icons/resources/icons8-wood.png",
+            import.meta.url
+          ).href;
         case "stone":
           return new URL(
-            "@/assets/icons/stone/icons8-stone.png",
+            "@/assets/icons/resources/icons8-stone.png",
             import.meta.url
           ).href;
         case "clay":
           return new URL(
-            "@/assets/icons/clay/icons8-pottery.png",
+            "@/assets/icons/resources/icons8-pottery.png",
             import.meta.url
           ).href;
         case "iron":
-          return new URL("@/assets/icons/iron/icons8-iron.png", import.meta.url)
-            .href;
-        // structures
+          return new URL(
+            "@/assets/icons/resources/icons8-iron.png",
+            import.meta.url
+          ).href;
+        // other
         case "tree":
-          return new URL("@/assets/icons/tree/icons8-tree.png", import.meta.url)
-            .href;
+          return new URL(
+            "@/assets/icons/other/icons8-tree.png",
+            import.meta.url
+          ).href;
+        case "star":
+          return new URL(
+            "@/assets/icons/other/icons8-star.png",
+            import.meta.url
+          ).href;
 
         default:
           return "";

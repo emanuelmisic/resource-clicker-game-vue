@@ -48,8 +48,8 @@ export default defineComponent({
       builtStructures: [] as Array<string>,
       resources: {
         wood: 500,
-        stone: 0,
-        clay: 0,
+        stone: 500,
+        clay: 100,
       } as { [key: string]: number },
       alertMessage: "",
       alertType: "",
