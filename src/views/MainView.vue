@@ -26,13 +26,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { STRUCTURES } from "@/helpers/constants";
-import { StructureObject } from "@/helpers/types";
+import { BuiltStructureObject, StructureObject } from "@/helpers/types";
 
 import AlertWindow from "@/components/AlertWindow.vue";
 import MainNav from "@/components/MainNav.vue";
 import GameWindow from "@/components/GameWindow.vue";
 import BuildMenu from "@/components/BuildMenu.vue";
-import { getLevel } from "@/helpers/globalMethods";
 
 export default defineComponent({
   name: "MainView",
@@ -45,7 +44,7 @@ export default defineComponent({
   data() {
     return {
       structures: [] as StructureObject[],
-      builtStructures: [] as Array<string>,
+      builtStructures: [] as BuiltStructureObject[],
       resources: {
         wood: 500,
         stone: 500,
@@ -58,7 +57,12 @@ export default defineComponent({
   },
   mounted() {
     this.structures = STRUCTURES as StructureObject[];
-    this.builtStructures = ["wood_cutter:1"];
+    this.builtStructures = [
+      {
+        id: "wood_cutter",
+        level: 1,
+      },
+    ];
   },
   methods: {
     addResource(e: { res: string; amount: number }) {
@@ -70,8 +74,8 @@ export default defineComponent({
     getBuiltStructureLevel(id: string) {
       let result = 0;
       for (const k in this.builtStructures) {
-        if (this.builtStructures[k].includes(id)) {
-          result = getLevel(this.builtStructures[k]);
+        if (this.builtStructures[k].id === id) {
+          result = this.builtStructures[k].level;
           break;
         }
       }
@@ -97,14 +101,17 @@ export default defineComponent({
         this.resources[k] -= cost[k];
       }
       if (action === "build") {
-        this.builtStructures.push(`${s.id}:1`);
+        this.builtStructures.push({ id: s.id, level: 1 });
         this.alertType = "success";
         this.alertMessage = `Bought ${s.structure_name}!`;
       } else {
         for (const k in this.builtStructures) {
-          if (this.builtStructures[k].includes(s.id)) {
-            const level = getLevel(this.builtStructures[k]);
-            this.builtStructures[k] = `${s.id}:${level + 1}`;
+          if (this.builtStructures[k].id === s.id) {
+            const level = this.builtStructures[k].level;
+            this.builtStructures[k] = {
+              ...this.builtStructures[k],
+              level: level + 1,
+            };
             this.alertType = "success";
             this.alertMessage = `Successfully upgraded ${s.structure_name}!`;
           }

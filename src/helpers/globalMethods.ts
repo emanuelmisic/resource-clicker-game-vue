@@ -1,24 +1,20 @@
 import { STRUCTURES } from "./constants";
-
-function getLevel(item: string): number {
-  const arr = item.split(":");
-  return parseInt(arr[arr.length - 1]);
-}
+import { BuiltStructureObject } from "./types";
 
 function getBuiltStructureFromResource(
-  builtStructuresList: string[],
+  builtStructuresList: BuiltStructureObject[],
   resource: string
-): string | null {
+): BuiltStructureObject | null {
   let strObj = null;
   for (const k in STRUCTURES) {
     if (STRUCTURES[k].resource_name === resource) strObj = STRUCTURES[k];
   }
   if (!strObj) return null;
   for (const k in builtStructuresList) {
-    if (builtStructuresList[k].includes(strObj.id as string))
+    if (builtStructuresList[k].id === (strObj.id as string))
       return builtStructuresList[k];
   }
   return null;
 }
 
-export { getLevel, getBuiltStructureFromResource };
+export { getBuiltStructureFromResource };

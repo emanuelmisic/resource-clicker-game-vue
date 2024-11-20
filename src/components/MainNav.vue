@@ -20,6 +20,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { getBuiltStructureFromResource } from "@/helpers/globalMethods";
+import { BuiltStructureObject } from "@/helpers/types";
 
 import Icon from "@/components/Icon.vue";
 
@@ -35,7 +36,7 @@ export default defineComponent({
   data() {
     return {
       resourcesObject: {} as { [key: string]: number },
-      builtStructuresList: [] as string[],
+      builtStructuresList: [] as BuiltStructureObject[],
     };
   },
   watch: {

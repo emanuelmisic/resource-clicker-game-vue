@@ -15,9 +15,9 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { BuiltStructureObject, StructureObject } from "@/helpers/types";
+
 import Structure from "@/components/Structure.vue";
-import { StructureObject } from "@/helpers/types";
-import { getLevel } from "@/helpers/globalMethods";
 
 export default defineComponent({
   name: "BuildMenuDialog",
@@ -33,7 +33,7 @@ export default defineComponent({
     return {
       open: false,
       structuresList: [] as StructureObject[],
-      builtStructuresList: [] as string[],
+      builtStructuresList: [] as BuiltStructureObject[],
     };
   },
   watch: {
@@ -53,8 +53,8 @@ export default defineComponent({
   methods: {
     getBuiltStructureLevel(id: string): number {
       for (const k in this.builtStructuresList) {
-        if (this.builtStructuresList[k].includes(id)) {
-          return getLevel(this.builtStructuresList[k]);
+        if (this.builtStructuresList[k].id === id) {
+          return this.builtStructuresList[k].level;
         }
       }
       return 0;

@@ -9,3 +9,8 @@ export type StructureObject = {
   upgrade_costs: StructureCostType[];
   build_cost?: StructureCostType;
 };
+
+export type BuiltStructureObject = {
+  id: string;
+  level: number;
+};
