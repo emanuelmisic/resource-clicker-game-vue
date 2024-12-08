@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onMounted, reactive, ref } from "vue";
 import { STRUCTURES } from "@/helpers/constants";
 import { BuiltStructureObject, StructureObject } from "@/helpers/types";
 
@@ -41,83 +41,96 @@ export default defineComponent({
     GameWindow,
     BuildMenu,
   },
-  data() {
-    return {
-      structures: [] as StructureObject[],
-      builtStructures: [] as BuiltStructureObject[],
-      resources: {
-        wood: 500,
-        stone: 500,
-        clay: 100,
-      } as { [key: string]: number },
-      alertMessage: "",
-      alertType: "",
-      isBuildMenuOpen: false,
-    };
-  },
-  mounted() {
-    this.structures = STRUCTURES as StructureObject[];
-    this.builtStructures = [
+  setup() {
+    const isBuildMenuOpen = ref(false);
+    const resources = reactive<{ [key: string]: number }>({
+      wood: 500,
+      stone: 500,
+      clay: 100,
+    });
+    const alertMessage = ref("");
+    const alertType = ref("");
+    const structures = ref<StructureObject[]>([]);
+    const builtStructures = ref<BuiltStructureObject[]>([
       {
         id: "wood_cutter",
         level: 1,
       },
-    ];
-  },
-  methods: {
-    addResource(e: { res: string; amount: number }) {
-      this.resources[e.res] += e.amount;
-    },
-    openMenu(menu: string) {
-      if (menu === "build") this.isBuildMenuOpen = true;
-    },
-    getBuiltStructureLevel(id: string) {
-      let result = 0;
-      for (const k in this.builtStructures) {
-        if (this.builtStructures[k].id === id) {
-          result = this.builtStructures[k].level;
-          break;
-        }
-      }
-      return result;
-    },
-    buyStructure(action: string, s: StructureObject) {
+    ]);
+
+    onMounted(() => {
+      structures.value = STRUCTURES as StructureObject[];
+    });
+
+    function openMenu(menuType: string) {
+      if (menuType === "build") isBuildMenuOpen.value = true;
+    }
+
+    function addResource(e: { res: string; amount: number }) {
+      resources[e.res] += e.amount;
+    }
+
+    function buyStructure(action: string, s: StructureObject) {
       if (!s || !action) return;
       const cost =
         action === "build"
           ? s.build_cost
-          : s.upgrade_costs[this.getBuiltStructureLevel(s.id) - 1];
+          : s.upgrade_costs[_getBuiltStructureLevel(s.id) - 1];
 
-      for (const k in this.resources) {
-        if (cost && cost[k] > this.resources[k]) {
-          this.alertType = "error";
-          this.alertMessage = "Not enough materials!";
+      for (const k in resources) {
+        if (cost && cost[k] > resources[k]) {
+          alertType.value = "error";
+          alertMessage.value = "Not enough materials!";
           return;
         }
       }
 
       // buy the structure
       for (const k in cost) {
-        this.resources[k] -= cost[k];
+        resources[k] -= cost[k];
       }
       if (action === "build") {
-        this.builtStructures.push({ id: s.id, level: 1 });
-        this.alertType = "success";
-        this.alertMessage = `Bought ${s.structure_name}!`;
+        builtStructures.value.push({ id: s.id, level: 1 });
+        alertType.value = "success";
+        alertMessage.value = `Bought ${s.structure_name}!`;
       } else {
-        for (const k in this.builtStructures) {
-          if (this.builtStructures[k].id === s.id) {
-            const level = this.builtStructures[k].level;
-            this.builtStructures[k] = {
-              ...this.builtStructures[k],
+        const bs = builtStructures.value;
+        for (const k in bs) {
+          if (bs[k].id === s.id) {
+            const level = bs[k].level;
+            builtStructures.value[k] = {
+              ...bs[k],
               level: level + 1,
             };
-            this.alertType = "success";
-            this.alertMessage = `Successfully upgraded ${s.structure_name}!`;
+            alertType.value = "success";
+            alertMessage.value = `Successfully upgraded ${s.structure_name}!`;
           }
         }
       }
-    },
+    }
+
+    function _getBuiltStructureLevel(id: string) {
+      let result = 0;
+      const bs = builtStructures.value;
+      for (const k in bs) {
+        if (bs[k].id === id) {
+          return bs[k].level;
+        }
+      }
+      return result;
+    }
+
+    return {
+      isBuildMenuOpen,
+      resources,
+      alertMessage,
+      alertType,
+      structures,
+      builtStructures,
+      openMenu,
+      addResource,
+      buyStructure,
+    };
   },
 });
 </script>

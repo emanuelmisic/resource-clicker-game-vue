@@ -42,7 +42,9 @@ export default defineComponent({
     watch(
       () => props.builtStructures,
       (newValue) =>
-        (builtStructuresList.value = (newValue as BuiltStructureObject[]) ?? [])
+        (builtStructuresList.value =
+          (newValue as BuiltStructureObject[]) ?? []),
+      { immediate: true }
     );
 
     function getBuiltStructureLevel(id: string): number {
