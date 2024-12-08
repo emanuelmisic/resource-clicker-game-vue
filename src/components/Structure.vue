@@ -23,15 +23,7 @@
     <icon :icon-name="getStructure.icon" class="structure__icon" />
     <span class="structure__name">{{ getStructure?.structure_name }}</span>
     <span class="structure__level"> {{ structureLevelDisplay }} </span>
-    <button
-      class="structure__action-btn"
-      @click="
-        $emit('add', {
-          res: getStructure?.resource_name,
-          amount: calculatedAddAmount,
-        })
-      "
-    >
+    <button class="structure__action-btn" @click="emitAdd()">
       +{{ resourceAddAmount }}
       <icon :icon-name="getStructure.resource_name" icon-size="small" />
     </button>
@@ -39,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, computed, ref, watch } from "vue";
 import { StructureCostType, StructureObject } from "@/helpers/types";
 import { STRUCTURES } from "@/helpers/constants";
 
@@ -55,52 +47,64 @@ export default defineComponent({
     structureId: String,
     structureLevel: Number,
   },
-  data() {
-    return {
-      level: 0,
+  setup(props, { emit }) {
+    const level = ref(0);
+
+    const getStructure = computed<StructureObject>(() => {
+      return (
+        STRUCTURES.find((structure) => structure.id === props.structureId) ||
+        STRUCTURES[0]
+      );
+    });
+
+    const cost = computed<StructureCostType>(() => {
+      return level.value
+        ? getStructure.value.upgrade_costs[level.value - 1]
+        : getStructure.value.build_cost;
+    });
+
+    const btnActionDisplay = computed(() => {
+      return cost.value ? (level.value ? "UPGRADE" : "BUILD") : "MAX";
+    });
+
+    const resourceAddAmount = computed(() => {
+      return getStructure.value.resource_add_amounts[level.value - 1];
+    });
+
+    const structureLevelDisplay = computed(() => {
+      return `(level ${level.value})`;
+    });
+
+    const emitAdd = () => {
+      emit("add", {
+        res: getStructure.value?.resource_name,
+        amount: resourceAddAmount.value,
+      });
     };
-  },
-  computed: {
-    getStructure(): StructureObject {
-      const structureList = STRUCTURES;
-      for (const i in structureList) {
-        if (structureList[i].id === this.structureId) return structureList[i];
-      }
-      return structureList[0];
-    },
-    cost(): StructureCostType | undefined {
-      const cost = this.level
-        ? this.getStructure.upgrade_costs[this.level - 1]
-        : this.getStructure?.build_cost;
-      return cost;
-    },
-    btnActionDisplay(): string {
-      if (!this.cost) return "MAX";
-      return this.level ? "UPGRADE" : "BUILD";
-    },
-    resourceAddAmount(): number {
-      return this.getStructure.resource_add_amounts[this.level - 1];
-    },
-    structureLevelDisplay(): string {
-      return `(level ${this.level})`;
-    },
-    calculatedAddAmount(): number {
-      return this.getStructure.resource_add_amounts[this.level - 1];
-    },
-  },
-  watch: {
-    structureLevel: {
-      immediate: true,
-      handler(v) {
-        this.level = v;
+
+    const handleClick = () => {
+      if (level.value) emit("upgrade", getStructure.value);
+      else emit("build", getStructure.value);
+    };
+
+    watch(
+      () => props.structureLevel,
+      (v) => {
+        level.value = v || 0;
       },
-    },
-  },
-  methods: {
-    handleClick() {
-      if (this.level) this.$emit("upgrade", this.getStructure);
-      else this.$emit("build", this.getStructure);
-    },
+      { immediate: true }
+    );
+
+    return {
+      level,
+      getStructure,
+      cost,
+      btnActionDisplay,
+      resourceAddAmount,
+      structureLevelDisplay,
+      handleClick,
+      emitAdd,
+    };
   },
 });
 </script>

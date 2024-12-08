@@ -7,6 +7,7 @@ export const STRUCTURES: StructureObject[] = [
     structure_name: "Wood Cutter",
     icon: "tree",
     resource_add_amounts: [1, 2, 3],
+    build_cost: {},
     upgrade_costs: [{ wood: 45 }, { wood: 100, stone: 30 }],
   },
   {
