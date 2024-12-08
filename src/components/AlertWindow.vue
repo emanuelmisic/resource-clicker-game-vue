@@ -8,21 +8,25 @@
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent, watch } from "vue";
+
+export default defineComponent({
   name: "AlertWindowComponent",
   props: {
     msg: String,
     type: { type: String, default: "success" },
   },
-  watch: {
-    msg() {
-      setTimeout(() => {
-        // eslint-disable-next-line
-        (this as any).$emit("clear-msg");
-      }, 5000);
-    },
+  setup(props, { emit }) {
+    watch(
+      () => props.msg,
+      () => {
+        setTimeout(() => {
+          emit("clear-msg");
+        }, 5000);
+      }
+    );
   },
-};
+});
 </script>
 
 <style>

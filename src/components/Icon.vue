@@ -3,16 +3,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 export default defineComponent({
   name: "IconComponent",
   props: {
     iconName: String,
     iconSize: String,
   },
-  computed: {
-    size(): number {
-      switch (this.iconSize) {
+  setup(props) {
+    const size = computed(() => {
+      switch (props.iconSize) {
         case "tiny":
           return 16;
         case "small":
@@ -20,9 +20,10 @@ export default defineComponent({
         default:
           return 26;
       }
-    },
-    iconSrc(): string {
-      switch (this.iconName) {
+    });
+
+    const iconSrc = computed(() => {
+      switch (props.iconName) {
         // resources
         case "wood":
           return new URL(
@@ -59,7 +60,12 @@ export default defineComponent({
         default:
           return "";
       }
-    },
+    });
+
+    return {
+      size,
+      iconSrc,
+    };
   },
 });
 </script>

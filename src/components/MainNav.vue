@@ -3,7 +3,7 @@
     <ul id="resources">
       <template v-for="(n, key) in resourcesObject" :key="key">
         <li v-if="showResource(key as string)">
-          <icon :icon-name="`${key as string}`" icon-size="small" />
+          <icon :icon-name="`${key}`" icon-size="small" />
           {{ n }}
         </li>
       </template>
@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import { getBuiltStructureFromResource } from "@/helpers/globalMethods";
 import { BuiltStructureObject } from "@/helpers/types";
 
@@ -33,36 +33,43 @@ export default defineComponent({
     builtStructures: Array,
     resources: Object,
   },
-  data() {
-    return {
-      resourcesObject: {} as { [key: string]: number },
-      builtStructuresList: [] as BuiltStructureObject[],
+  setup(props, { emit }) {
+    const resourcesObject = ref<{ [key: string]: number }>({});
+    const builtStructuresList = ref<BuiltStructureObject[]>([]);
+
+    const openMenu = (menu: string) => {
+      emit("open-menu", menu);
     };
-  },
-  watch: {
-    resources: {
-      immediate: true,
-      handler(v) {
-        this.resourcesObject = v;
-      },
-    },
-    builtStructures: {
-      immediate: true,
-      handler(v) {
-        this.builtStructuresList = v;
-      },
-    },
-  },
-  methods: {
-    openMenu(menu: string) {
-      this.$emit("open-menu", menu);
-    },
-    showResource(key: string) {
-      if (!this.builtStructuresList) return false;
+
+    const showResource = (key: string) => {
+      if (!builtStructuresList.value) return false;
       return (
-        getBuiltStructureFromResource(this.builtStructuresList, key) != null
+        getBuiltStructureFromResource(builtStructuresList.value, key) != null
       );
-    },
+    };
+
+    watch(
+      () => props.resources,
+      (newValue) => {
+        resourcesObject.value = newValue || {};
+      },
+      { immediate: true }
+    );
+
+    watch(
+      () => props.builtStructures,
+      (newValue) => {
+        builtStructuresList.value = newValue as BuiltStructureObject[];
+      },
+      { immediate: true }
+    );
+
+    return {
+      resourcesObject,
+      builtStructuresList,
+      openMenu,
+      showResource,
+    };
   },
 });
 </script>
