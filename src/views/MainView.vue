@@ -26,7 +26,11 @@
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref } from "vue";
 import { STRUCTURES } from "@/helpers/constants";
-import { BuiltStructureObject, StructureObject } from "@/helpers/types";
+import {
+  BuiltStructureObject,
+  StructureCostType,
+  StructureObject,
+} from "@/helpers/types";
 
 import AlertWindow from "@/components/AlertWindow.vue";
 import MainNav from "@/components/MainNav.vue";
@@ -72,44 +76,66 @@ export default defineComponent({
 
     function buyStructure(action: string, s: StructureObject) {
       if (!s || !action) return;
-      const cost =
-        action === "build"
-          ? s.build_cost
-          : s.upgrade_costs[_getBuiltStructureLevel(s.id) - 1];
+      const cost = _getStructureCost(action, s);
 
-      for (const k in resources) {
-        if (cost && cost[k] > resources[k]) {
-          alertType.value = "error";
-          alertMessage.value = "Not enough materials!";
-          return;
-        }
+      const isStructureAffordable =
+        _calculateIfStructureIsAffordable(resources);
+      if (!isStructureAffordable) {
+        alertType.value = "error";
+        alertMessage.value = "Not enough materials!";
+        return;
       }
+      _payForStructure(cost);
 
-      // buy the structure
+      if (action === "build") _buildStructure(s);
+      else _upgradeStructure(s);
+    }
+
+    function _getStructureCost(
+      action: string,
+      structure: StructureObject
+    ): StructureCostType {
+      return action === "build"
+        ? structure.build_cost
+        : structure.upgrade_costs[__getBuiltStructureLevel(structure.id) - 1];
+    }
+
+    function _calculateIfStructureIsAffordable(cost: StructureCostType) {
+      for (const k in resources) {
+        if (cost && cost[k] > resources[k]) return false;
+      }
+      return true;
+    }
+
+    function _payForStructure(cost: StructureCostType) {
       for (const k in cost) {
         resources[k] -= cost[k];
       }
-      if (action === "build") {
-        builtStructures.value.push({ id: s.id, level: 1 });
-        alertType.value = "success";
-        alertMessage.value = `Bought ${s.structure_name}!`;
-      } else {
-        const bs = builtStructures.value;
-        for (const k in bs) {
-          if (bs[k].id === s.id) {
-            const level = bs[k].level;
-            builtStructures.value[k] = {
-              ...bs[k],
-              level: level + 1,
-            };
-            alertType.value = "success";
-            alertMessage.value = `Successfully upgraded ${s.structure_name}!`;
-          }
+    }
+
+    function _buildStructure(structure: StructureObject) {
+      builtStructures.value.push({ id: structure.id, level: 1 });
+      alertType.value = "success";
+      alertMessage.value = `Bought ${structure.structure_name}!`;
+    }
+
+    function _upgradeStructure(structure: StructureObject) {
+      const bs = builtStructures.value;
+      for (const k in bs) {
+        if (bs[k].id === structure.id) {
+          const level = bs[k].level;
+          builtStructures.value[k] = {
+            ...bs[k],
+            level: level + 1,
+          };
+          alertType.value = "success";
+          alertMessage.value = `Successfully upgraded ${structure.structure_name}!`;
+          return;
         }
       }
     }
 
-    function _getBuiltStructureLevel(id: string) {
+    function __getBuiltStructureLevel(id: string) {
       let result = 0;
       const bs = builtStructures.value;
       for (const k in bs) {
