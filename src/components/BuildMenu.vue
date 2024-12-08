@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import { BuiltStructureObject, StructureObject } from "@/helpers/types";
 
 import Structure from "@/components/Structure.vue";
@@ -29,36 +29,38 @@ export default defineComponent({
     isOpen: Boolean,
     structures: Array,
   },
-  data() {
-    return {
-      open: false,
-      structuresList: [] as StructureObject[],
-      builtStructuresList: [] as BuiltStructureObject[],
-    };
-  },
-  watch: {
-    structures: {
-      immediate: true,
-      handler(v) {
-        this.structuresList = v ?? [];
-      },
-    },
-    builtStructures: {
-      immediate: true,
-      handler(v) {
-        this.builtStructuresList = v ?? [];
-      },
-    },
-  },
-  methods: {
-    getBuiltStructureLevel(id: string): number {
-      for (const k in this.builtStructuresList) {
-        if (this.builtStructuresList[k].id === id) {
-          return this.builtStructuresList[k].level;
+  setup(props) {
+    const open = ref(false);
+    const structuresList = ref<StructureObject[]>([]);
+    const builtStructuresList = ref<BuiltStructureObject[]>([]);
+
+    watch(
+      () => props.structures,
+      (newValue) =>
+        (structuresList.value = (newValue as StructureObject[]) ?? [])
+    );
+    watch(
+      () => props.builtStructures,
+      (newValue) =>
+        (builtStructuresList.value = (newValue as BuiltStructureObject[]) ?? [])
+    );
+
+    function getBuiltStructureLevel(id: string): number {
+      const list = builtStructuresList.value;
+      for (const k in list) {
+        if (list[k].id === id) {
+          return list[k].level;
         }
       }
       return 0;
-    },
+    }
+
+    return {
+      open,
+      structuresList,
+      builtStructuresList,
+      getBuiltStructureLevel,
+    };
   },
 });
 </script>

@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import { BuiltStructureObject } from "@/helpers/types";
 
 import Structure from "@/components/Structure.vue";
@@ -25,18 +25,16 @@ export default defineComponent({
     structures: Array,
     builtStructures: Array,
   },
-  data() {
-    return {
-      buildings: [] as BuiltStructureObject[],
-    };
-  },
-  watch: {
-    builtStructures: {
-      immediate: true,
-      handler(v) {
-        this.buildings = v;
-      },
-    },
+  setup(props) {
+    const buildings = ref<BuiltStructureObject[]>([]);
+
+    watch(
+      () => props.builtStructures,
+      (newValue) => (buildings.value = newValue as BuiltStructureObject[]),
+      { immediate: true }
+    );
+
+    return { buildings };
   },
 });
 </script>

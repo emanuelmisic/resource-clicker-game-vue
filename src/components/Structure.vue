@@ -75,18 +75,6 @@ export default defineComponent({
       return `(level ${level.value})`;
     });
 
-    const emitAdd = () => {
-      emit("add", {
-        res: getStructure.value?.resource_name,
-        amount: resourceAddAmount.value,
-      });
-    };
-
-    const handleClick = () => {
-      if (level.value) emit("upgrade", getStructure.value);
-      else emit("build", getStructure.value);
-    };
-
     watch(
       () => props.structureLevel,
       (v) => {
@@ -95,6 +83,18 @@ export default defineComponent({
       { immediate: true }
     );
 
+    function emitAdd() {
+      emit("add", {
+        res: getStructure.value?.resource_name,
+        amount: resourceAddAmount.value,
+      });
+    }
+
+    function handleClick() {
+      if (level.value) emit("upgrade", getStructure.value);
+      else emit("build", getStructure.value);
+    }
+
     return {
       level,
       getStructure,
@@ -102,8 +102,8 @@ export default defineComponent({
       btnActionDisplay,
       resourceAddAmount,
       structureLevelDisplay,
-      handleClick,
       emitAdd,
+      handleClick,
     };
   },
 });

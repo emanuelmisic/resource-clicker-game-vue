@@ -37,17 +37,6 @@ export default defineComponent({
     const resourcesObject = ref<{ [key: string]: number }>({});
     const builtStructuresList = ref<BuiltStructureObject[]>([]);
 
-    const openMenu = (menu: string) => {
-      emit("open-menu", menu);
-    };
-
-    const showResource = (key: string) => {
-      if (!builtStructuresList.value) return false;
-      return (
-        getBuiltStructureFromResource(builtStructuresList.value, key) != null
-      );
-    };
-
     watch(
       () => props.resources,
       (newValue) => {
@@ -63,6 +52,17 @@ export default defineComponent({
       },
       { immediate: true }
     );
+
+    function openMenu(menu: string) {
+      emit("open-menu", menu);
+    }
+
+    function showResource(key: string) {
+      if (!builtStructuresList.value) return false;
+      return (
+        getBuiltStructureFromResource(builtStructuresList.value, key) != null
+      );
+    }
 
     return {
       resourcesObject,
