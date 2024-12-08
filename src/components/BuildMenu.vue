@@ -11,6 +11,7 @@
       @upgrade="$emit('upgrade-structure', $event)"
     />
   </div>
+  <div v-if="isOpen" class="dialog-overlay"></div>
 </template>
 
 <script lang="ts">
@@ -74,6 +75,7 @@ export default defineComponent({
   left: 50%;
   padding: 30px;
   transform: translate(-50%, -50%);
+  z-index: 1;
 
   display: flex;
   gap: 20px;
@@ -87,5 +89,15 @@ export default defineComponent({
   position: absolute;
   top: 0;
   right: 0;
+}
+
+.dialog-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  opacity: 0.5;
 }
 </style>

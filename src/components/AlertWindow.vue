@@ -36,6 +36,7 @@ export default defineComponent({
   left: 50%;
   transform: translate(-50%, 0);
   font-weight: bold;
+  z-index: 999;
 
   padding: 15px;
   border: 5px outset #a27400;

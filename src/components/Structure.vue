@@ -6,7 +6,7 @@
     }}</span>
     <div v-if="cost" class="structure__cost--menu">
       <span v-for="(n, key) in cost" :key="key">
-        <icon :icon-name="`${key as string}`" icon-size="tiny" />
+        <icon :icon-name="`${key}`" icon-size="tiny" />
         {{ n }}
       </span>
     </div>
