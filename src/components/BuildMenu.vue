@@ -4,6 +4,7 @@
     <structure
       v-for="s in structuresList"
       :key="s.id"
+      :is-structure-unlocked="getIsStructureUnlocked(s)"
       :structure-id="s.id"
       :structure-level="getBuiltStructureLevel(s.id)"
       type="menu"
@@ -31,7 +32,6 @@ export default defineComponent({
     structures: Array,
   },
   setup(props) {
-    const open = ref(false);
     const structuresList = ref<StructureObject[]>([]);
     const builtStructuresList = ref<BuiltStructureObject[]>([]);
 
@@ -58,11 +58,20 @@ export default defineComponent({
       return 0;
     }
 
+    function getIsStructureUnlocked(structure: StructureObject) {
+      if (!structure.unlock_requirement) return true;
+      for (const k in builtStructuresList.value) {
+        if (builtStructuresList.value[k].id === structure.unlock_requirement)
+          return true;
+      }
+      return false;
+    }
+
     return {
-      open,
       structuresList,
       builtStructuresList,
       getBuiltStructureLevel,
+      getIsStructureUnlocked,
     };
   },
 });

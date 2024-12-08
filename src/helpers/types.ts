@@ -6,8 +6,9 @@ export type StructureObject = {
   structure_name: string;
   icon: string;
   resource_add_amounts: number[];
-  upgrade_costs: StructureCostType[];
+  unlock_requirement: string | null;
   build_cost: StructureCostType;
+  upgrade_costs: StructureCostType[];
 };
 
 export type BuiltStructureObject = {

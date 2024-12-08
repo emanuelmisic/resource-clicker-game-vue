@@ -1,23 +1,26 @@
 <template>
   <div v-if="type === 'menu'" class="structure--menu">
-    <icon :icon-name="getStructure.icon" class="structure__icon--menu" />
-    <span class="structure__name--menu">{{
-      getStructure?.structure_name
-    }}</span>
-    <div v-if="cost" class="structure__cost--menu">
-      <span v-for="(n, key) in cost" :key="key">
-        <icon :icon-name="`${key}`" icon-size="tiny" />
-        {{ n }}
-      </span>
-    </div>
-    <icon v-else icon-name="star" />
-    <button
-      class="structure__action-btn--menu"
-      :disabled="!cost"
-      @click="handleClick()"
-    >
-      {{ btnActionDisplay }}
-    </button>
+    <template v-if="isStructureUnlocked">
+      <icon :icon-name="getStructure.icon" class="structure__icon--menu" />
+      <span class="structure__name--menu">{{
+        getStructure?.structure_name
+      }}</span>
+      <div v-if="cost" class="structure__cost--menu">
+        <span v-for="(n, key) in cost" :key="key">
+          <icon :icon-name="`${key}`" icon-size="tiny" />
+          {{ n }}
+        </span>
+      </div>
+      <icon v-else icon-name="star" />
+      <button
+        class="structure__action-btn--menu"
+        :disabled="!cost"
+        @click="handleClick()"
+      >
+        {{ btnActionDisplay }}
+      </button>
+    </template>
+    <template v-else> LOCKED </template>
   </div>
   <div v-else class="structure">
     <icon :icon-name="getStructure.icon" class="structure__icon" />
@@ -46,6 +49,7 @@ export default defineComponent({
     type: { type: String, default: null },
     structureId: String,
     structureLevel: Number,
+    isStructureUnlocked: Boolean,
   },
   setup(props, { emit }) {
     const level = ref(0);
