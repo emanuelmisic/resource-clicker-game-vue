@@ -1,7 +1,7 @@
 <template>
   <nav class="main-nav">
     <ul id="resources">
-      <template v-for="(n, key) in resourcesObject" :key="key">
+      <template v-for="(n, key) in resourcesStore.resources" :key="key">
         <li v-if="showResource(key as string)">
           <icon :icon-name="`${key}`" icon-size="small" />
           {{ n }}
@@ -17,61 +17,47 @@
   </nav>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, watch } from "vue";
+<script setup lang="ts">
+import { defineEmits, defineOptions, defineProps, ref, watch } from "vue";
+import { useResourcesStore } from "@/stores/resourcesStore";
 import { getBuiltStructureFromResource } from "@/helpers/globalMethods";
 import { BuiltStructureObject } from "@/helpers/types";
 
 import Icon from "@/components/Icon.vue";
 
-export default defineComponent({
-  name: "MainNavComponent",
+defineOptions({
+  name: "MainNav",
   components: {
     Icon,
   },
-  props: {
-    builtStructures: Array,
-    resources: Object,
-  },
-  setup(props, { emit }) {
-    const resourcesObject = ref<{ [key: string]: number }>({});
-    const builtStructuresList = ref<BuiltStructureObject[]>([]);
-
-    watch(
-      () => props.resources,
-      (newValue) => {
-        resourcesObject.value = newValue || {};
-      },
-      { immediate: true }
-    );
-
-    watch(
-      () => props.builtStructures,
-      (newValue) => {
-        builtStructuresList.value = newValue as BuiltStructureObject[];
-      },
-      { immediate: true }
-    );
-
-    function openMenu(menu: string) {
-      emit("open-menu", menu);
-    }
-
-    function showResource(key: string) {
-      if (!builtStructuresList.value) return false;
-      return (
-        getBuiltStructureFromResource(builtStructuresList.value, key) != null
-      );
-    }
-
-    return {
-      resourcesObject,
-      builtStructuresList,
-      openMenu,
-      showResource,
-    };
-  },
 });
+const resourcesStore = useResourcesStore();
+
+const emit = defineEmits<{
+  "open-menu": [menu: string];
+}>();
+
+const props = defineProps({
+  builtStructures: Array,
+});
+const builtStructuresList = ref<BuiltStructureObject[]>([]);
+
+watch(
+  () => props.builtStructures,
+  (newValue) => {
+    builtStructuresList.value = newValue as BuiltStructureObject[];
+  },
+  { immediate: true }
+);
+
+function openMenu(menu: string) {
+  emit("open-menu", menu);
+}
+
+function showResource(key: string) {
+  if (!builtStructuresList.value) return false;
+  return getBuiltStructureFromResource(builtStructuresList.value, key) != null;
+}
 </script>
 
 <style>

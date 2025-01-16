@@ -2,7 +2,7 @@
   <div v-if="isOpen" class="dialog">
     <button class="close-btn" @click="$emit('close')">&#10060;</button>
     <structure
-      v-for="s in structuresList"
+      v-for="s in structuresStore.structures"
       :key="s.id"
       :is-structure-unlocked="getIsStructureUnlocked(s)"
       :structure-id="s.id"
@@ -15,66 +15,43 @@
   <div v-if="isOpen" class="dialog-overlay"></div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, watch } from "vue";
-import { BuiltStructureObject, StructureObject } from "@/helpers/types";
+<script setup lang="ts">
+import { defineOptions, defineProps, ref } from "vue";
+import { useStructuresStore } from "@/stores/structuresStore";
+import { StructureObject } from "@/helpers/types";
 
-import Structure from "@/components/Structure.vue";
+import Structure from "@/components/StructureComponent.vue";
 
-export default defineComponent({
+defineOptions({
   name: "BuildMenuDialog",
   components: {
     Structure,
   },
-  props: {
-    builtStructures: Array,
-    isOpen: Boolean,
-    structures: Array,
-  },
-  setup(props) {
-    const structuresList = ref<StructureObject[]>([]);
-    const builtStructuresList = ref<BuiltStructureObject[]>([]);
-
-    watch(
-      () => props.structures,
-      (newValue) =>
-        (structuresList.value = (newValue as StructureObject[]) ?? [])
-    );
-    watch(
-      () => props.builtStructures,
-      (newValue) =>
-        (builtStructuresList.value =
-          (newValue as BuiltStructureObject[]) ?? []),
-      { immediate: true }
-    );
-
-    function getBuiltStructureLevel(id: string): number {
-      const list = builtStructuresList.value;
-      for (const k in list) {
-        if (list[k].id === id) {
-          return list[k].level;
-        }
-      }
-      return 0;
-    }
-
-    function getIsStructureUnlocked(structure: StructureObject) {
-      if (!structure.unlock_requirement) return true;
-      for (const k in builtStructuresList.value) {
-        if (builtStructuresList.value[k].id === structure.unlock_requirement)
-          return true;
-      }
-      return false;
-    }
-
-    return {
-      structuresList,
-      builtStructuresList,
-      getBuiltStructureLevel,
-      getIsStructureUnlocked,
-    };
-  },
 });
+const structuresStore = useStructuresStore();
+
+defineProps({
+  isOpen: Boolean,
+});
+
+function getBuiltStructureLevel(id: string): number {
+  const list = structuresStore.builtStructures;
+  for (const k in list) {
+    if (list[k].id === id) {
+      return list[k].level;
+    }
+  }
+  return 0;
+}
+
+function getIsStructureUnlocked(structure: StructureObject) {
+  if (!structure.unlock_requirement) return true;
+  for (const k in structuresStore.builtStructures) {
+    if (structuresStore.builtStructures[k].id === structure.unlock_requirement)
+      return true;
+  }
+  return false;
+}
 </script>
 
 <style>

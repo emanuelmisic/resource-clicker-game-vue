@@ -5,7 +5,6 @@
       :key="item.id"
       :structure-id="item.id"
       :structure-level="item.level"
-      @add="$emit('add-resource', $event)"
     />
   </section>
 </template>
@@ -14,7 +13,7 @@
 import { defineComponent, ref, watch } from "vue";
 import { BuiltStructureObject } from "@/helpers/types";
 
-import Structure from "@/components/Structure.vue";
+import Structure from "@/components/StructureComponent.vue";
 
 export default defineComponent({
   name: "GameWindowComponent",
