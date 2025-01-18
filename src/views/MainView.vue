@@ -1,9 +1,5 @@
 <template>
-  <alert-window
-    :msg="alertMessage"
-    :type="alertType"
-    @clear-msg="alertMessage = ''"
-  />
+  <alert-window ref="alert" />
   <main-nav
     :built-structures="structuresStore.builtStructures"
     :resources="resourcesStore.resources"
@@ -41,12 +37,16 @@ defineOptions({
 const resourcesStore = useResourcesStore();
 const structuresStore = useStructuresStore();
 
+const alert = ref(null);
 const isBuildMenuOpen = ref(false);
-const alertMessage = ref("");
-const alertType = ref("");
 
 function openMenu(menuType: string) {
   if (menuType === "build") isBuildMenuOpen.value = true;
+}
+
+function triggerAlert(type: string, msg: string) {
+  if (alert.value)
+    (alert.value as InstanceType<typeof AlertWindow>).trigger(type, msg);
 }
 
 function buyStructure(action: string, s: StructureObject) {
@@ -55,20 +55,17 @@ function buyStructure(action: string, s: StructureObject) {
   const isStructureAffordable = _calculateIfStructureIsAffordable(cost);
 
   if (!isStructureAffordable) {
-    alertType.value = "error";
-    alertMessage.value = "Not enough materials!";
+    triggerAlert("error", "Not enough materials!");
     return;
   }
   _payForStructure(cost);
 
   if (action === "build") {
     structuresStore.buildStructure(s);
-    alertType.value = "success";
-    alertMessage.value = `Bought ${s.structure_name}!`;
+    triggerAlert("success", `Bought ${s.structure_name}!`);
   } else {
     structuresStore.upgradeStructure(s.id);
-    alertType.value = "success";
-    alertMessage.value = `Successfully upgraded ${s.structure_name}!`;
+    triggerAlert("success", `Successfully upgraded ${s.structure_name}!`);
   }
 }
 

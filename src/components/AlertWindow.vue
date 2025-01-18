@@ -1,32 +1,49 @@
 <template>
-  <div v-if="msg && type === 'success'" class="alert alert--success">
-    {{ msg }}
-  </div>
-  <div v-else-if="msg && type === 'error'" class="alert alert--error">
-    {{ msg }}
+  <div v-if="show" class="alert" :class="alertTypeClass">
+    {{ text }}
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, watch } from "vue";
+<script setup lang="ts">
+import { defineOptions, defineExpose, ref, computed } from "vue";
 
-export default defineComponent({
+defineOptions({
   name: "AlertWindowComponent",
-  props: {
-    msg: String,
-    type: { type: String, default: "success" },
-  },
-  setup(props, { emit }) {
-    watch(
-      () => props.msg,
-      () => {
-        setTimeout(() => {
-          emit("clear-msg");
-        }, 5000);
-      }
-    );
-  },
 });
+
+const show = ref(false);
+const text = ref("");
+const type = ref("success");
+const timeout = ref(0);
+
+const alertTypeClass = computed<string>(() => {
+  switch (type.value) {
+    case "success":
+      return "alert--success";
+    case "error":
+      return "alert--error";
+    default:
+      return "";
+  }
+});
+
+function trigger(alertType: string, message: string) {
+  text.value = message;
+  type.value = alertType;
+
+  showAlert();
+}
+
+function showAlert() {
+  if (timeout.value) clearTimeout(timeout.value);
+  show.value = true;
+
+  timeout.value = setTimeout(() => {
+    show.value = false;
+  }, 3000);
+}
+
+defineExpose({ trigger });
 </script>
 
 <style>
