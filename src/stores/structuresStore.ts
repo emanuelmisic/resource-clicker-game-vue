@@ -1,7 +1,11 @@
 import { STRUCTURES } from "@/helpers/constants";
-import { BuiltStructureObject, StructureObject } from "@/helpers/types";
+import {
+  BuiltStructureObject,
+  StructureCostType,
+  StructureObject,
+} from "@/helpers/types";
 import { defineStore } from "pinia";
-import { computed, reactive } from "vue";
+import { reactive } from "vue";
 
 export const useStructuresStore = defineStore("structures", () => {
   const builtStructures = reactive<BuiltStructureObject[]>([
@@ -10,8 +14,18 @@ export const useStructuresStore = defineStore("structures", () => {
       level: 1,
     },
   ]);
-
   const structures = reactive<StructureObject[]>(STRUCTURES);
+
+  function getStructureCost(
+    action: string,
+    structure: StructureObject
+  ): StructureCostType {
+    return action === "build"
+      ? structure.build_cost
+      : structure.upgrade_costs[
+          (getBuiltStructureLevel(structure.id) as number) - 1
+        ];
+  }
 
   function getBuiltStructure(id: string) {
     for (const i in builtStructures) {
@@ -40,6 +54,7 @@ export const useStructuresStore = defineStore("structures", () => {
   return {
     builtStructures,
     structures,
+    getStructureCost,
     getBuiltStructure,
     getBuiltStructureLevel,
     buildStructure,

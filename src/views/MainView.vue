@@ -51,7 +51,7 @@ function openMenu(menuType: string) {
 
 function buyStructure(action: string, s: StructureObject) {
   if (!s || !action) return;
-  const cost = _getStructureCost(action, s);
+  const cost = structuresStore.getStructureCost(action, s);
   const isStructureAffordable = _calculateIfStructureIsAffordable(cost);
 
   if (!isStructureAffordable) {
@@ -61,19 +61,15 @@ function buyStructure(action: string, s: StructureObject) {
   }
   _payForStructure(cost);
 
-  if (action === "build") _buildStructure(s);
-  else _upgradeStructure(s);
-}
-
-function _getStructureCost(
-  action: string,
-  structure: StructureObject
-): StructureCostType {
-  return action === "build"
-    ? structure.build_cost
-    : structure.upgrade_costs[
-        (structuresStore.getBuiltStructureLevel(structure.id) as number) - 1
-      ];
+  if (action === "build") {
+    structuresStore.buildStructure(s);
+    alertType.value = "success";
+    alertMessage.value = `Bought ${s.structure_name}!`;
+  } else {
+    structuresStore.upgradeStructure(s.id);
+    alertType.value = "success";
+    alertMessage.value = `Successfully upgraded ${s.structure_name}!`;
+  }
 }
 
 function _calculateIfStructureIsAffordable(cost: StructureCostType) {
@@ -87,17 +83,5 @@ function _payForStructure(cost: StructureCostType) {
   for (const k in cost) {
     resourcesStore.resources[k] -= cost[k];
   }
-}
-
-function _buildStructure(structure: StructureObject) {
-  structuresStore.buildStructure(structure);
-  alertType.value = "success";
-  alertMessage.value = `Bought ${structure.structure_name}!`;
-}
-
-function _upgradeStructure(structure: StructureObject) {
-  structuresStore.upgradeStructure(structure.id);
-  alertType.value = "success";
-  alertMessage.value = `Successfully upgraded ${structure.structure_name}!`;
 }
 </script>
