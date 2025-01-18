@@ -35,11 +35,11 @@ const structuresStore = useStructuresStore();
 const resourcesStore = useResourcesStore();
 
 const emit = defineEmits<{
-  "open-menu": [menu: string];
+  "open-menu": [menuType: string];
 }>();
 
-function openMenu(menu: string) {
-  emit("open-menu", menu);
+function openMenu(menuType: string) {
+  emit("open-menu", menuType);
 }
 
 function showResource(key: string) {
@@ -60,14 +60,14 @@ function showResource(key: string) {
   align-content: center;
   height: 60px;
   background: #fffec4;
-  background: -moz-linear-gradient(top, #fffec4 0%, #ffdb59 70%, #d2921a 100%);
+  background: -moz-linear-gradient(top, #fffec4 0%, #ffdb59 80%, #d2921a 100%);
   background: -webkit-linear-gradient(
     top,
     #fffec4 0%,
-    #ffdb59 70%,
+    #ffdb59 80%,
     #d2921a 100%
   );
-  background: linear-gradient(to bottom, #fffec4 0%, #ffdb59 70%, #d2921a 100%);
+  background: linear-gradient(to bottom, #fffec4 0%, #ffdb59 80%, #d2921a 100%);
 }
 
 .main-nav ul {

@@ -56,22 +56,37 @@ defineExpose({ trigger });
   z-index: 999;
 
   padding: 15px;
-  border: 5px outset #a27400;
   border-radius: 5px;
 
   background: #e2a200;
-  background: -moz-linear-gradient(top, #e2a200 0%, #a27400 50%, #715100 100%);
-  background: -webkit-linear-gradient(
+  background: -moz-linear-gradient(
     top,
-    #e2a200 0%,
-    #a27400 50%,
+    #715100 0%,
+    #a27400 20%,
+    #e2a200 50%,
+    #a27400 80%,
     #715100 100%
   );
-  background: linear-gradient(to bottom, #e2a200 0%, #a27400 50%, #715100 100%);
+  background: -webkit-linear-gradient(
+    top,
+    #715100 0%,
+    #a27400 20%,
+    #e2a200 50%,
+    #a27400 80%,
+    #715100 100%
+  );
+  background: linear-gradient(
+    to bottom,
+    #715100 0%,
+    #a27400 20%,
+    #e2a200 50%,
+    #a27400 80%,
+    #715100 100%
+  );
 }
 
 .alert--success {
-  color: #075a00;
+  color: #064c00;
 }
 
 .alert--error {
