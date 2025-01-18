@@ -1,17 +1,17 @@
 <template>
   <div v-if="type === 'menu'" class="structure--menu">
     <template v-if="isStructureUnlocked">
-      <icon :icon-name="getStructure.icon" class="structure__icon--menu" />
+      <icon :name="getStructure.icon" class="structure__icon--menu" />
       <span class="structure__name--menu">{{
         getStructure?.structure_name
       }}</span>
       <div v-if="cost" class="structure__cost--menu">
         <span v-for="(n, key) in cost" :key="key">
-          <icon :icon-name="`${key}`" icon-size="tiny" />
+          <icon :name="`${key}`" size="tiny" />
           {{ n }}
         </span>
       </div>
-      <icon v-else icon-name="star" />
+      <icon v-else name="star" />
       <button
         class="structure__action-btn--menu"
         :disabled="!cost"
@@ -23,12 +23,12 @@
     <template v-else> LOCKED </template>
   </div>
   <div v-else class="structure">
-    <icon :icon-name="getStructure.icon" class="structure__icon" />
+    <icon :name="getStructure.icon" class="structure__icon" />
     <span class="structure__name">{{ getStructure?.structure_name }}</span>
     <span class="structure__level"> {{ structureLevelDisplay }} </span>
     <button class="structure__action-btn" @click="handleAddClick()">
       +{{ resourceAddAmount }}
-      <icon :icon-name="getStructure.resource_name" icon-size="small" />
+      <icon :name="getStructure.resource_name" size="small" />
     </button>
   </div>
 </template>
@@ -46,7 +46,7 @@ import { useResourcesStore } from "@/stores/resourcesStore";
 import { StructureCostType, StructureObject } from "@/helpers/types";
 import { STRUCTURES } from "@/helpers/constants";
 
-import Icon from "@/components/Icon.vue";
+import Icon from "@/components/IconComponent.vue";
 
 defineOptions({
   name: "StructureComponent",

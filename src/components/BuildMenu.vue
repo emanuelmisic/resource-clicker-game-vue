@@ -1,6 +1,6 @@
 <template>
-  <div v-if="isOpen" class="dialog">
-    <button class="close-btn" @click="$emit('close')">&#10060;</button>
+  <div v-if="modelValue" class="dialog">
+    <button class="close-btn" @click="emit('close')">&#10060;</button>
     <structure
       v-for="s in structuresStore.structures"
       :key="s.id"
@@ -8,15 +8,15 @@
       :structure-id="s.id"
       :structure-level="getBuiltStructureLevel(s.id)"
       type="menu"
-      @build="$emit('build-structure', $event)"
-      @upgrade="$emit('upgrade-structure', $event)"
+      @build="emit('build-structure', $event)"
+      @upgrade="emit('upgrade-structure', $event)"
     />
   </div>
-  <div v-if="isOpen" class="dialog-overlay"></div>
+  <div v-if="modelValue" class="dialog-overlay"></div>
 </template>
 
 <script setup lang="ts">
-import { defineOptions, defineProps, ref } from "vue";
+import { defineOptions, defineEmits, defineModel } from "vue";
 import { useStructuresStore } from "@/stores/structuresStore";
 import { StructureObject } from "@/helpers/types";
 
@@ -28,11 +28,15 @@ defineOptions({
     Structure,
   },
 });
-const structuresStore = useStructuresStore();
 
-defineProps({
-  isOpen: Boolean,
-});
+const emit = defineEmits<{
+  close: [];
+  "build-structure": [structure: StructureObject];
+  "upgrade-structure": [structure: StructureObject];
+}>();
+
+const structuresStore = useStructuresStore();
+const modelValue = defineModel();
 
 function getBuiltStructureLevel(id: string): number {
   const list = structuresStore.builtStructures;

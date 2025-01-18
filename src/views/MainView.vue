@@ -2,12 +2,11 @@
   <alert-window ref="alert" />
   <main-nav
     :built-structures="structuresStore.builtStructures"
-    :resources="resourcesStore.resources"
     @open-menu="openMenu($event)"
   />
   <game-window :built-structures="structuresStore.builtStructures" />
   <build-menu
-    :is-open="isBuildMenuOpen"
+    v-model="isBuildMenuOpen"
     @build-structure="buyStructure('build', $event)"
     @close="isBuildMenuOpen = false"
     @upgrade-structure="buyStructure('upgrade', $event)"

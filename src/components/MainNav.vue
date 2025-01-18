@@ -1,10 +1,10 @@
 <template>
   <nav class="main-nav">
     <ul id="resources">
-      <template v-for="(n, key) in resourcesStore.resources" :key="key">
+      <template v-for="(value, key) in resourcesStore.resources" :key="key">
         <li v-if="showResource(key as string)">
-          <icon :icon-name="`${key}`" icon-size="small" />
-          {{ n }}
+          <icon :name="`${key}`" size="small" />
+          {{ value }}
         </li>
       </template>
     </ul>
@@ -18,12 +18,12 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits, defineOptions, defineProps, ref, watch } from "vue";
+import { defineEmits, defineOptions } from "vue";
 import { useResourcesStore } from "@/stores/resourcesStore";
+import { useStructuresStore } from "@/stores/structuresStore";
 import { getBuiltStructureFromResource } from "@/helpers/globalMethods";
-import { BuiltStructureObject } from "@/helpers/types";
 
-import Icon from "@/components/Icon.vue";
+import Icon from "@/components/IconComponent.vue";
 
 defineOptions({
   name: "MainNav",
@@ -31,32 +31,22 @@ defineOptions({
     Icon,
   },
 });
+const structuresStore = useStructuresStore();
 const resourcesStore = useResourcesStore();
 
 const emit = defineEmits<{
   "open-menu": [menu: string];
 }>();
 
-const props = defineProps({
-  builtStructures: Array,
-});
-const builtStructuresList = ref<BuiltStructureObject[]>([]);
-
-watch(
-  () => props.builtStructures,
-  (newValue) => {
-    builtStructuresList.value = newValue as BuiltStructureObject[];
-  },
-  { immediate: true }
-);
-
 function openMenu(menu: string) {
   emit("open-menu", menu);
 }
 
 function showResource(key: string) {
-  if (!builtStructuresList.value) return false;
-  return getBuiltStructureFromResource(builtStructuresList.value, key) != null;
+  if (!structuresStore.builtStructures) return false;
+  return (
+    getBuiltStructureFromResource(structuresStore.builtStructures, key) != null
+  );
 }
 </script>
 
